@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "run blender python",
+      "type": "shell",
+      "command": "python",
+      "args": [
+        "${workspaceFolder}\\send_to_blender.py",
+      ],
+      "group": {"kind": "build", "isDefault": true},
+      "problemMatcher":[]
+    }
+  ]
+}
