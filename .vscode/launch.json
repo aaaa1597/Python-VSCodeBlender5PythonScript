@@ -1,0 +1,22 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Send to Blender",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/send_to_blender.py",
+      "args": [
+        "${workspaceFolder}/ki001.py"
+      ],
+      "console": "integratedTerminal",  // 実行ログをVSCodeのターミナルに出力する
+      "cwd": "${workspaceFolder}",      // カレントフォルダ設定
+      "justMyCode": true,               // 自分んコードだけをステップインする(外部ライブラリはスキップ)
+      "env": {
+        "PYTHONUNBUFFERED": "1",        // 出力行バッファリングを切ってprintの表示を即時にする
+        // 必要に応じてここで上書き可能
+        // "BLENDER_EXE": "c:\\Program Files\\..."
+      }
+    }
+  ]
+}

@@ -16,18 +16,18 @@ server.setblocking(False)
 # 接続中のクライアント管理
 clients = []
 
-def Handle_socket():
-  """UIを止めずに定期呼出される受信ループ"""
+def handle_socket():
+  """UIを止めずに定期呼び出される受信ループ"""
   try:
     # 新規接続の受付(ノンブロッキング)
     try:
-      conn.addr = server.accept()
+      conn, addr = server.accept()
       conn.setblocking(False)
       clients.append(conn)
       print(f"[Blender] New client: {addr}")
     except BlockingIOError:
       pass
-    
+
     if clients:
       # 読み取り可能ソケットを識別
       readable, _, _ = select.select(clients, [], [], 0)
@@ -39,23 +39,24 @@ def Handle_socket():
 
         if not data:
           # 切断
-          print(f"[Blender] client disconnected...")
-          clients.remove[s]
+          print("[Blender] client disconnected...")
+          clients.remove(s)
           s.close()
           continue
 
         # 受信ペイロードはPythonスクリプト文字列
-        code = data.decode("utf-8", error="replace")
+        code = data.decode("utf-8", errors="replace")
         # 安全のため末尾改行を許可(送信側で付ける前提)
         code = code.strip("\r\n")
         # 受け取ったコードを実行
         try:
           exec(code, {"bpy": bpy})
-          s.sendall(b"ok\n")
+          s.sendall(b"OK\n")
         except Exception as e:
           msg = f"ERROR:{e}\n"
-          s.sendall(msg.encode("uft-8"))
+          s.sendall(msg.encode("utf-8"))
           print(msg)
+
   except Exception as e:
     print(f"[Blender] Socket loop error:{e}")
 
@@ -63,5 +64,5 @@ def Handle_socket():
   return 0.1
 
 # タイマー登録
-bpy.app.timers.register(Handle_socket, first_interval=0.1)
-print(f"[Blender] Socket Server listening on {HOST}:{PORT}")
+bpy.app.timers.register(handle_socket, first_interval=0.1)
+print(f"[Blender] Socket server listening on {HOST}:{PORT}")
