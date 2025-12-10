@@ -9,7 +9,7 @@
       "args": [
         "${workspaceFolder}/ki001.py"
       ],
-      "console": "integratedTerminal",  // 実行ログをVSCodeのターミナルに出力する
+      "console": "externalTerminal",  // 実行ログをVSCodeのターミナルに出力する
       "cwd": "${workspaceFolder}",      // カレントフォルダ設定
       "justMyCode": true,               // 自分んコードだけをステップインする(外部ライブラリはスキップ)
       "env": {
