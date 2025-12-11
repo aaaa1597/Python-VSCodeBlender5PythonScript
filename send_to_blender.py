@@ -48,8 +48,8 @@ def main():
 
   # 先にBlender側のサーバが起動しているかを確認(手動起動)
   if not is_server_ready(HOST, PORT, 3.0):
-    print(f"[VS2Blend] Blender TCP Server not ready at {HOST}:{PORT}", file=sys.stderr)
-    print(f"先に blender_server_startup.blend をダブルクリックして起動してください。", file=sys.stderr)
+    print(f"[VS2Blend] Blender TCP server not ready at {HOST}:{PORT}.", file=sys.stderr)
+    print(" - 先に blender_server_startup.blend をダブルクリックで起動してください。", file=sys.stderr)
     sys.exit(1)
 
   send_concat(files)

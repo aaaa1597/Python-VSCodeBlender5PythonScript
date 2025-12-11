@@ -25,7 +25,7 @@ print(f"[Blender] {SERVER_STATUS['last']}")
 clients = []
 
 # stdout/stderrをソケットへ返すラッパー(printを送信側に表示)
-class SockerWriter(io.TextIOBase):
+class SocketWriter(io.TextIOBase):
   def __init__(self, sock): self.sock = sock
   def write(self, s):
     if not isinstance(s, (bytes, bytearray)):
@@ -69,9 +69,10 @@ def handle_socket():
           except Exception:
             pass
           SERVER_STATUS["clients"] = len(clients)
-          SERVER_STATUS["last"] = f"[Blender] client disconnected."
+          SERVER_STATUS["last"] = f"[Blender] Client disconnected."
           print(f"[Blender] {SERVER_STATUS['last']}")
           _redraw_view3d()
+          continue
 
         # 受信ペイロードはPythonスクリプト文字列(末尾改行OK 送信側で付ける想定)
         code = data.decode("utf-8", errors="replace").strip("\r\n")
@@ -80,7 +81,7 @@ def handle_socket():
         _redraw_view3d()
         # 出力をソケットにリダイレクト
         old_out, old_err = sys.stdout, sys.stderr
-        out = SockerWriter(s)
+        out = SocketWriter(s)
         sys.stdout, sys.stderr = out, out
 
         # 受け取ったコードを実行
@@ -106,11 +107,11 @@ def handle_socket():
 
 def _redraw_view3d():
   # Nパネルの表示更新用にView3Dを再描画
-  for area in bpy.context.windows.screen.areas:
+  for area in bpy.context.window.screen.areas:
     if area.type == 'VIEW_3D':
       area.tag_redraw()
 
-# Nパネルへ表示更新処理
+# Nパネルの表示更新処理
 class BLENDER_TCP_ServerStatus(bpy.types.Panel):
   bl_idname = "BLENDER_TCP_ServerStatus"
   bl_label = "Blender TCP Server"
@@ -120,12 +121,12 @@ class BLENDER_TCP_ServerStatus(bpy.types.Panel):
   def draw(self, context):
     layout = self.layout
     running = "LISTENING" if SERVER_STATUS["running"] else "STOPPED"
-    layout.lalel(text=f"status: {running}")
-    layout.lalel(text=f"Host: {SERVER_STATUS['host']}:{SERVER_STATUS['port']}")
-    layout.lalel(text=f"Clients: {SERVER_STATUS['clients']}")
-    layout.lalel(text=f"Status: {SERVER_STATUS['last']}")
+    layout.label(text=f"Status: {running}")
+    layout.label(text=f"Host: {SERVER_STATUS['host']}:{SERVER_STATUS['port']}")
+    layout.label(text=f"Clients: {SERVER_STATUS['clients']}")
+    layout.label(text=f"Status: {SERVER_STATUS['last']}")
 
-# タイマー登録&開始
+# タイマー登録＆開始
 def register():
   bpy.utils.register_class(BLENDER_TCP_ServerStatus)
   bpy.app.timers.register(handle_socket, first_interval=0.1)
